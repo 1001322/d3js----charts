@@ -1,0 +1,108 @@
+<html>
+
+<head>
+  <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
+  <title></title>
+
+  <body>
+    <div id="duration">
+      <svg style="height:300px;width:100%"></svg>
+      <button class="random">Random Inner</button>
+      <button class="random">Random Outer</button>
+    </div>
+
+    <script type="text/javascript">
+    
+      var dataset = {
+          apples: [{
+            value: 2,
+            color: '#1352A4',
+            label: 'one'
+          }, {
+            value: 2,
+            color: '#5D9CEC',
+            label: 'two'
+          }, {
+            value: 2,
+            color: '#1352A4',
+            label: 'three'
+          }, {
+            value: 2,
+            color: '#A4C7F4',
+            label: 'four'
+          }, {
+            value: 2,
+            color: '#DBE8FB',
+            label: 'five'
+          }],
+          oranges: [{
+            value: 53245,
+            color: '#58A53B',
+            label: 'one'
+          }, {
+            value: 28479,
+            color: '#83C969',
+            label: 'two'
+          }, {
+            value: 19697,
+            color: '#A8D996',
+            label: 'three'
+          }, {
+            value: 24037,
+            color: '#CDE9C3',
+            label: 'four'
+          }, {
+            value: 19654,
+            color: '#E6F4E1',
+            label: 'five'
+          }]
+        };
+
+        var width = d3.select('#duration').node().offsetWidth,
+          height = 300,
+          cwidth = 33;
+
+        var pie = d3.layout.pie()
+          .sort(null)
+          .value(function(d) {
+            return d.value;
+          })
+
+        var innerArc = d3.svg.arc()
+          .innerRadius(58)
+          .outerRadius(cwidth * 2.9);
+
+        var outerArc = d3.svg.arc()
+          .innerRadius(70 + cwidth)
+          .outerRadius(cwidth * 3.5);
+
+        var svg = d3.select("#duration svg")
+          .append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        var gs = svg.selectAll("g").data(d3.values(dataset)).enter().append("g");
+        var en = gs.selectAll("path")
+          .data(function(d, i) {
+            return pie(d);
+          })
+          .enter();
+
+        en.append("path")
+          .attr("fill", function(d) {
+            return d.data.color;
+          })
+          .attr("d", function(d, i, j) {
+            return j === 0 ? innerArc(d) : outerArc(d);
+          });
+
+        en.append("text")
+          .text(function(d) {
+            return d.data.label;
+          })
+          .attr("transform", function(d, i, j) {
+            return j === 0 ? "translate(" + innerArc.centroid(d) + ")" : "translate(" + outerArc.centroid(d) + ")";
+          });
+    </script>
+  </body>
+
+</html>
